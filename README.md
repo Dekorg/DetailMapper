@@ -1,6 +1,10 @@
 # DetailMapper
 Mapping framework of Detail relationships for ORM (EntityFramework, NHibernate, etc).
 
+Installation Nuget
+```nuget
+Install-Package DetailMapper
+```
 
 Example clases
 ```csharp
