@@ -156,5 +156,143 @@ namespace DetailMapper.Tests
 
 
         }
+
+        [Test]
+        public void Test_Map_Detail_RequiresDependency_ThrowsArgumentException()
+        {
+            // Arrange
+
+            var mapperBuilder = DetailMapperBuilder.Create<OrderDTO, Order>();
+            var detailMap = mapperBuilder.Detail((dto) => dto.Items, (e) => e.Items)
+                .WithDependencies<IItemRepository>(true)
+                .AddAction((ctx, item) => ctx.Dependencies.Insert(ctx.Master, item))
+                .DeleteAction((ctx, item) => ctx.Dependencies.Delete(item))
+                .CreateFunc((ctx) => new ItemOrder())
+                .EqualsFunc((itemDTO, item) => itemDTO.Id == item.Id)
+                .Build();
+
+            // Act
+            
+            Assert.That(() =>
+            {
+                detailMap.Map(_orderDTO1, _order1, null);
+            }, Throws.ArgumentNullException);
+
+        }
+
+        [Test]
+        public void Test_Map_Detail_No_RequiresDependency()
+        {
+            // Arrange
+
+            var mapperBuilder = DetailMapperBuilder.Create<OrderDTO, Order>();
+            var detailMap = mapperBuilder.Detail((dto) => dto.Items, (e) => e.Items)
+                .WithDependencies<IItemRepository>(false)
+                .AddAction((ctx, item) => { })
+                .DeleteAction((ctx, item) => { })
+                .CreateFunc((ctx) => new ItemOrder())
+                .EqualsFunc((itemDTO, item) => itemDTO.Id == item.Id)
+                .Build();
+
+            // Act
+
+            detailMap.Map(_orderDTO1, _order1, null);
+        }
+
+        [Test]
+        public void Test_Map_Detail_No_DetailCollection_ThrowsException()
+        {
+            // Arrange
+
+            var mapperBuilder = DetailMapperBuilder.Create<OrderDTO, Order>();
+            var detailMap = mapperBuilder.Detail((dto) => dto.Items, (e) => e.Items)
+                .WithDependencies<IItemRepository>(false)
+                .AddAction((ctx, item) => ctx.Dependencies.Insert(ctx.Master, item))
+                .DeleteAction((ctx, item) => ctx.Dependencies.Delete(item))
+                .CreateFunc((ctx) => new ItemOrder())
+                .EqualsFunc((itemDTO, item) => itemDTO.Id == item.Id)
+                .Build();
+
+            _order1.Items = null;
+
+            // Act
+
+            Assert.That(() =>
+            {
+                detailMap.Map(_orderDTO1, _order1, null);
+            }, Throws.Exception);
+
+        }
+
+
+        [Test]
+        public void Test_Map_Detail_No_DetailDTOCollection_ThrowsException()
+        {
+            // Arrange
+
+            var mapperBuilder = DetailMapperBuilder.Create<OrderDTO, Order>();
+            var detailMap = mapperBuilder.Detail((dto) => dto.Items, (e) => e.Items)
+                .WithDependencies<IItemRepository>(false)
+                .AddAction((ctx, item) => ctx.Dependencies.Insert(ctx.Master, item))
+                .DeleteAction((ctx, item) => ctx.Dependencies.Delete(item))
+                .CreateFunc((ctx) => new ItemOrder())
+                .EqualsFunc((itemDTO, item) => itemDTO.Id == item.Id)
+                .Build();
+
+            _orderDTO1.Items = null;
+
+            // Act
+
+            Assert.That(() =>
+            {
+                detailMap.Map(_orderDTO1, _order1, null);
+            }, Throws.Exception);
+
+        }
+
+        [Test]
+        public void Test_Map_Detail_No_Master_ThrowsArgumentNullException()
+        {
+            // Arrange
+
+            var mapperBuilder = DetailMapperBuilder.Create<OrderDTO, Order>();
+            var detailMap = mapperBuilder.Detail((dto) => dto.Items, (e) => e.Items)
+                .WithDependencies<IItemRepository>(false)
+                .AddAction((ctx, item) => ctx.Dependencies.Insert(ctx.Master, item))
+                .DeleteAction((ctx, item) => ctx.Dependencies.Delete(item))
+                .CreateFunc((ctx) => new ItemOrder())
+                .EqualsFunc((itemDTO, item) => itemDTO.Id == item.Id)
+                .Build();
+            // Act
+
+            Assert.That(() =>
+            {
+                detailMap.Map(_orderDTO1, null, null);
+            }, Throws.ArgumentNullException);
+
+        }
+
+        [Test]
+        public void Test_Map_Detail_No_Master_DTO_ThrowsArgumentNullException()
+        {
+            // Arrange
+
+            var mapperBuilder = DetailMapperBuilder.Create<OrderDTO, Order>();
+            var detailMap = mapperBuilder.Detail((dto) => dto.Items, (e) => e.Items)
+                .WithDependencies<IItemRepository>(false)
+                .AddAction((ctx, item) => ctx.Dependencies.Insert(ctx.Master, item))
+                .DeleteAction((ctx, item) => ctx.Dependencies.Delete(item))
+                .CreateFunc((ctx) => new ItemOrder())
+                .EqualsFunc((itemDTO, item) => itemDTO.Id == item.Id)
+                .Build();
+            // Act
+
+            Assert.That(() =>
+            {
+                detailMap.Map(null, _order1, null);
+            }, Throws.ArgumentNullException);
+
+        }
+
     }
 }

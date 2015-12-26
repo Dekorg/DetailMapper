@@ -11,13 +11,28 @@ namespace DetailMapper.Impl
         private readonly IDetailBuilderProperties<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies> _baseBuilder;
         public DetailMapper(IDetailBuilderProperties<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies> baseBuilder)
         {
+            if (baseBuilder == null)
+                throw new ArgumentNullException("baseBuilder");
             _baseBuilder = baseBuilder;
         }
 
         public virtual void Map(TMasterDTO masterDTO, TMaster master, TDependencies dependencies, Action<TDetailDTO, TDetail> mapper = null)
         {
+            if (masterDTO == null)
+                throw new ArgumentNullException("masterDTO");
+            if (master == null)
+                throw new ArgumentNullException("master");
+            if(_baseBuilder.RequiresDependency && dependencies == null)
+                throw new ArgumentNullException("dependencies");
+
             var detailCollection = _baseBuilder.DetailCollection(master);
             var detailDTOCollection = _baseBuilder.DetailDTOCollection(masterDTO);
+
+            if (detailCollection == null)
+                throw new Exception("DetailCollection can not be null");
+            if (detailDTOCollection == null)
+                throw new Exception("detailDTOCollection can not be null");
+
             var deleteAction = _baseBuilder.Delete;
             var addAction = _baseBuilder.Add;
             var updateAction = _baseBuilder.Update;

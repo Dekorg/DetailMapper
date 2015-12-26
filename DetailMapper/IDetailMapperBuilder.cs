@@ -40,7 +40,7 @@ namespace DetailMapper
         /// </summary>
         /// <typeparam name="TDependencies">Dependency Type.</typeparam>
         /// <returns></returns>
-        IDetailMapperBuilder<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies> WithDependencies<TDependencies>();
+        IDetailMapperBuilder<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies> WithDependencies<TDependencies>(bool required = false);
     }
 
     /// <summary>

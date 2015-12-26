@@ -16,6 +16,14 @@ namespace DetailMapper.Impl
     /// <typeparam name="TDependencies">Dependency Type.</typeparam>
     public interface IDetailBuilderProperties<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies>
     {
+        /// <summary>
+        /// Gets a value indicating whether Map requires a dependency to be not null.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if requires dependency; otherwise, <c>false</c>.
+        /// </value>
+        bool RequiresDependency { get; }
+
         Func<TMasterDTO, ICollection<TDetailDTO>> DetailDTOCollection { get; }
 
         Func<TMaster, ICollection<TDetail>> DetailCollection { get; }

@@ -11,6 +11,7 @@ namespace DetailMapper.Impl
     {
         private readonly Func<TMasterDTO, ICollection<TDetailDTO>> _detailDTOCollection;
         private readonly Func<TMaster, ICollection<TDetail>> _detailCollection;
+        private readonly bool _requiresDependency;
         private Action<IViewModelContext<TMasterDTO, TMaster, TDependencies>, TDetail> _addAction;
         private Action<IViewModelContext<TMasterDTO, TMaster, TDependencies>, TDetail> _updateAction;
         private Action<IViewModelContext<TMasterDTO, TMaster, TDependencies>, TDetail> _deleteAction;
@@ -19,10 +20,12 @@ namespace DetailMapper.Impl
 
         #region Constructor
         public DetailMapperBuilder(
+            bool requiresDependency,
             Func<TMasterDTO, ICollection<TDetailDTO>> detailDTOCollection,
             Func<TMaster, ICollection<TDetail>> detailCollection
             )
         {
+            _requiresDependency = requiresDependency;
             _detailDTOCollection = detailDTOCollection;
             _detailCollection = detailCollection;
         }
@@ -30,6 +33,14 @@ namespace DetailMapper.Impl
 
 
         #region IDetailBuilderProperties
+
+        /// <summary>
+        /// Gets a value indicating whether Map requires a dependency to be not null.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if requires dependency; otherwise, <c>false</c>.
+        /// </value>
+        public bool RequiresDependency { get { return _requiresDependency; } }
 
         public Func<TMasterDTO, ICollection<TDetailDTO>> DetailDTOCollection
         {
@@ -102,6 +113,16 @@ namespace DetailMapper.Impl
 
         public IDetailMapper<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies> Build()
         {
+            // Validations
+            if (_addAction == null)
+                throw new Exception("AddAction can not be null");
+            if (_deleteAction == null)
+                throw new Exception("DeleteAction can not be null");
+            if (_create == null)
+                throw new Exception("CreateFunc can not be null");
+            if (_equals == null)
+                throw new Exception("EqualsFunc can not be null");
+
             return new DetailMapper<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies>(this);
         }
         #endregion
@@ -121,9 +142,9 @@ namespace DetailMapper.Impl
         }
 
         #region IDetailMapperBuilder
-        public IDetailMapperBuilder<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies> WithDependencies<TDependencies>()
+        public IDetailMapperBuilder<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies> WithDependencies<TDependencies>(bool required = false)
         {
-            return new DetailMapperBuilder<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies>(_detailDTOCollection, _detailCollection);
+            return new DetailMapperBuilder<TMasterDTO, TMaster, TDetailDTO, TDetail, TDependencies>(required, _detailDTOCollection, _detailCollection);
         }
         #endregion
     }
