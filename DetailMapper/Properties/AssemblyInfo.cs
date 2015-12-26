@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // conjunto de atributos. Cambie estos atributos para modificar la información
 // asociada con un ensamblado.
 [assembly: AssemblyTitle("DetailMapper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Mapping framework of Detail relationships for ORM (EntityFramework, NHibernate, etc).")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("JGQSolutions")]
 [assembly: AssemblyProduct("DetailMapper")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
