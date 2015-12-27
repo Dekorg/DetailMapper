@@ -98,6 +98,50 @@ namespace DetailMapper.Tests
         }
 
         [Test]
+        public void Test_Map_Detail_With_Id_0()
+        {
+            // Arrange
+            var mapperBuilder = DetailMapperBuilder.Create<OrderDTO, Order>();
+            var detailMap = mapperBuilder.Detail((dto) => dto.Items, (e) => e.Items)
+                .WithDependencies<object>()
+                .AddAction((ctx, item) => ctx.Master.AddItem(item))
+                .DeleteAction((ctx, item) => ctx.Master.RemoveItem(item))
+                .CreateFunc((ctx) => new ItemOrder())
+                .EqualsFunc((itemDTO, item) => itemDTO.Id == item.Id)
+                .Build();
+
+            _orderDTO1.Items.ForEach((x ) => x.Id = 0);
+
+
+            // Act
+            detailMap.Map(_orderDTO1, _order1, null, (itemDTO, item) =>
+            {
+                // Mapeo de propiedades internas
+                item.ProductId = itemDTO.ProductId;
+                item.Quantity = itemDTO.Quantity;
+            });
+
+            // Assert
+            Assert.That(_order1.Items.Count, Is.EqualTo(3));
+
+            var items = _order1.Items.ToList();
+
+            Assert.That(items[0].Order, Is.EqualTo(_order1));
+            Assert.That(items[0].ProductId, Is.EqualTo("Item 0"));
+            Assert.That(items[0].Quantity, Is.EqualTo(0m));
+
+            Assert.That(items[1].Order, Is.EqualTo(_order1));
+            Assert.That(items[1].ProductId, Is.EqualTo("Item 1"));
+            Assert.That(items[1].Quantity, Is.EqualTo(2m));
+
+            Assert.That(items[2].Order, Is.EqualTo(_order1));
+            Assert.That(items[2].ProductId, Is.EqualTo("Item 2"));
+            Assert.That(items[2].Quantity, Is.EqualTo(4m));
+
+
+        }
+
+        [Test]
         public void Test_Map_Detail_With_Repository()
         {
             // Arrange

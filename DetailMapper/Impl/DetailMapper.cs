@@ -33,6 +33,9 @@ namespace DetailMapper.Impl
             if (detailDTOCollection == null)
                 throw new Exception("detailDTOCollection can not be null");
 
+            // Utiliza una copia para evitar problemas de actualizaciones
+            var copyDetailCollection = new List<TDetail>(detailCollection);
+
             var deleteAction = _baseBuilder.Delete;
             var addAction = _baseBuilder.Add;
             var updateAction = _baseBuilder.Update;
@@ -42,14 +45,14 @@ namespace DetailMapper.Impl
             var viewModelContext = new ViewModelContext<TMasterDTO, TMaster, TDependencies>(masterDTO, master, dependencies);
 
             // Borra los details que ya no existen
-            detailCollection.Where(detail => !detailDTOCollection.Any(detailDTO => equals(detailDTO, detail)))
+            copyDetailCollection.Where(detail => !detailDTOCollection.Any(detailDTO => equals(detailDTO, detail)))
                 .ToList().ForEach(deleted => deleteAction(viewModelContext, deleted));
 
             // Actualiza o inserta los demás details
             foreach (var detailViewModel in detailDTOCollection)
             {
                 // Buscar que exista el detail
-                var detail = detailCollection.FirstOrDefault(auxDetail => equals(detailViewModel, auxDetail));
+                var detail = copyDetailCollection.FirstOrDefault(auxDetail => equals(detailViewModel, auxDetail));
                 if (detail == null)
                 {
                     detail = create(viewModelContext);

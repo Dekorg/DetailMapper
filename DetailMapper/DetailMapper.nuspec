@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/jgquiroga/DetailMapper</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial Commit.</releaseNotes>
+    <releaseNotes>Fix: Updates with id=0 saves only the last one.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>DetailMapper Orm Mapper</tags>
   </metadata>
